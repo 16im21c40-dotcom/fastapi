@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Form, Request, status
-from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from openai import AzureOpenAI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import httpx, os, uvicorn
@@ -18,11 +19,38 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# Index page
+
+# Azure OpenAI 초기화
+client = AzureOpenAI(
+    api_key=os.getenv("CL5Dg9EWcCnVG4GltHwfOTYsutRnrFFW9cr8IAotSyLkwv8hAkTwJQQJ99BIACHYHv6XJ3w3AAAAACOGs0SY"),
+    api_version="2024-12-01-preview",
+    azure_endpoint=os.getenv("https://ps050-mf4p2jno-eastus2.cognitiveservices.azure.com/")
+)
+
+
+@app.post("/chat")
+async def chat(message: str = Form(...)):
+    response = client.chat.completions.create(
+        model="gpt-5-mini",
+        messages=[{"role": "user", "content": message}]
+    )
+    answer = response.choices[0].message.content
+    return JSONResponse({"response": answer})
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    print('Request for index page received')
-    return templates.TemplateResponse('index.html', {"request": request})
+    print("Request for index page received")
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# @app.get("/", response_class=HTMLResponse)
+# async def get_form(request: Request):
+#     return templates.TemplateResponse("index.html", {"request": request})
+
+# # Index page
+# @app.get("/", response_class=HTMLResponse)
+# async def index(request: Request):
+#     print('Request for index page received')
+#     return templates.TemplateResponse('index.html', {"request": request})
 
 # Favicon handler
 @app.get('/favicon.ico')
