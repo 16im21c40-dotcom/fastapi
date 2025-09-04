@@ -1,9 +1,8 @@
 #!/bin/bash
-
-# 1. 가상환경 활성화 (있으면)
+# 仮想環境を作成（または再利用）し、明示的に有効化する
+python -m venv antenv
 source antenv/bin/activate
-
-# 2. FastAPI 앱 실행
-uvicorn main:app --host 0.0.0.0 --port 8000
-
-chmod +x startup.sh
+# 依存パッケージを確実にインストールする
+pip install -r requirements.txt
+# 仮想環境内のPythonを使ってStreamlitを起動する
+python -m streamlit run src/backend/main.py --server.port 8000 --server.address 0.0.0.0
