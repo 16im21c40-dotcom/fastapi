@@ -49,36 +49,31 @@ def root():
 # Chat endpoint with AzureOpenAI client
 @app.post("/chat")
 async def chat(request: Request):
-    if request.headers.get("content-type", "").startswith("application/json"):
-        data = await request.json()
-        message = data.get("message")
-    else:
-        form = await request.form()
-        message = form.get("message")
+    try:
+        if request.headers.get("content-type", "").startswith("application/json"):
+            data = await request.json()
+            message = data.get("message")
+        else:
+            form = await request.form()
+            message = form.get("message")
 
-    system_prompt = """
-    あなたは会話分析の専門家です。以下のユーザー発言から、
-    1. 要点を簡潔に抽出し、
-    2. 論理的・感情的・利他的な視点から応答を構築してください。
-    出力は以下の形式で：
-    {
-      "summary": "...",
-      "perspectives": {
-        "logical": "...",
-        "emotional": "...",
-        "altruistic": "..."
-      }
-    }
-    """
+        system_prompt = """（省略）"""
 
-    response = client.chat.completions.create(
-        model="gpt-5-mini",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": message}
-        ],
-        temperature=0.7
-    )
+        response = client.chat.completions.create(
+            model="gpt-5-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message}
+            ],
+            temperature=0.7
+        )
 
-    reply = response.choices[0].message.content
-    return JSONResponse({"response": reply})
+        reply = response.choices[0].message.content
+        return JSONResponse({"response": reply})
+
+    except Exception as e:
+        logging.error(f"Error in /chat: {e}")
+        return JSONResponse(
+            {"error": "Internal Server Error", "details": str(e)},
+            status_code=500
+        )
