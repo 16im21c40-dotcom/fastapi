@@ -56,7 +56,21 @@ async def chat(request: Request):
         form = await request.form()
         message = form.get("message")
 
-    system_prompt = """..."""  # 省略
+
+system_prompt = """
+あなたは会話分析の専門家です。以下のユーザー発言から、
+1. 要点を簡潔に抽出し、
+2. 論理的・感情的・利他的な視点から応答を構築してください。
+出力は以下の形式で：
+{
+  "summary": "...",
+  "perspectives": {
+    "logical": "...",
+    "emotional": "...",
+    "altruistic": "..."
+  }
+}
+"""
 
     response = client.chat.completions.create(
         model="gpt-5-mini",
