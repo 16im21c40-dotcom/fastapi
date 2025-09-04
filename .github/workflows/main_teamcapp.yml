@@ -58,6 +58,4 @@ jobs:
         with:
           app-name: 'teamcapp'
           slot-name: 'Production'
-
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7BA9996B48714A13AF94F9AA4076F106 }}
-
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_853450C0CFB8473C8F36FCB982C84168 }}
