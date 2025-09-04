@@ -22,7 +22,7 @@ templates = Jinja2Templates(directory="templates")
 
 # Azure OpenAI 초기화
 client = AzureOpenAI(
-    api_key=os.getenv("CL5Dg9EWcCnVG4GltHwfOTYsutRnrFFW9cr8IAotSyLkwv8hAkTwJQQJ99BIACHYHv6XJ3w3AAAAACOGs0SY"),
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
     api_version="2024-12-01-preview",
     azure_endpoint=os.getenv("https://ps050-mf4p2jno-eastus2.cognitiveservices.azure.com/")
 )
